@@ -123,6 +123,9 @@ Acts as the "manager" of the regex engine.
 It doesn't know how to match patterns itself; it just feeds lines of text to the match()
 function and acts on the result (the 1 or 0 return value).
 */
+
+#define MAX_LINE_LENGTH 1024 // Set a reasonable buffer size for reading lines
+
 int search_file(const char *filename, const char *pattern){
     // Implementation of file search function
     // Open file for reading
