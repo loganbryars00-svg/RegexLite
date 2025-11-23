@@ -7,6 +7,10 @@ This file handles the arguments and file reading for the regex engine.
 #include <stdlib.h>
 #include "regex.h"
 
+// Debugging includes - can be removed later
+#include <unistd.h>
+#include <limits.h>
+
 /*
 Acts as the "manager" of the regex engine.
 It doesn't know how to match patterns itself; it just feeds lines of text to the match()
@@ -14,7 +18,7 @@ function and acts on the result (the 1 or 0 return value).
 */
 #define MAX_LINE_LENGTH 1024 // Set a reasonable buffer size for reading lines
 
-int search_file(const char *filename, const char *pattern){
+int search_file(const char *filename, const char *pattern) {
     // Implementation of file search function
     // Open file for reading
     FILE *file = fopen(filename, "r");
@@ -42,18 +46,18 @@ int search_file(const char *filename, const char *pattern){
     return 0;
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
     // Check for correct number of arguments
     if (argc != 3) {
-        fprintf(stderr, "Usage: %s <pattern> <filename>\n", argv[0]);
+        printf("Usage: %s <file> <pattern>\n", argv[0]);
         return 1;
     }
 
-    const char *pattern = argv[1];
-    const char *filename = argv[2];
+    const char *file = argv[1];
+    const char *pattern = argv[2];
 
     // Search the file for the pattern
-    search_file(filename, pattern);
+    search_file(file, pattern);
 
     return 0;
 }
