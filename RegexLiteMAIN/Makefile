@@ -1,44 +1,44 @@
-Compiler to use
+# Compiler to use
 
 CC = gcc
 
-Compiler flags
+# Compiler flags
 
--Wall: Enable all warnings (helps find bugs)
+# -Wall: Enable all warnings (helps find bugs)
 
--Wextra: Enable even more warnings
+# -Wextra: Enable even more warnings
 
--std=c99: Use the C99 standard (standard for this type of project)
+# -std=c99: Use the C99 standard
 
 CFLAGS = -Wall -Wextra -std=c99
 
-The name of the final executable program
+# The name of the final executable program
 
 TARGET = regex-lite
 
-The source files
+# The source files
 
-SRCS = main.c regex.c
+SRCS = main.c RegexLiteV0_1.c
 
-The object files (automatically generated list: main.o regex.o)
+# The object files (based on source files)
 
 OBJS = $(SRCS:.c=.o)
 
-Default target: just typing 'make' will run this
+# Default target: just typing 'make' will run this
 
 all: $(TARGET)
 
-Link the object files together to create the executable
+# Link the object files together to create the executable
 
 $(TARGET): $(OBJS)
-$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-Compile each source file (.c) into an object file (.o)
+# Compile each source file (.c) into an object file (.o)
 
 %.o: %.c
-$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
-Clean up build files (typing 'make clean' runs this)
+# Clean up build files (typing 'make clean' runs this)
 
 clean:
-rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET)
