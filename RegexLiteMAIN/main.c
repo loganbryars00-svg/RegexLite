@@ -7,6 +7,9 @@ This file handles the arguments and file reading for the regex engine.
 #include <stdlib.h>
 #include "regex.h"
 #include <time.h> // Included for timing benchmarks
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <string.h> // Included for string manipulation functions to resolve newline issues in end anchor matching and negation
 
 // Debugging includes - can be removed later
@@ -70,16 +73,36 @@ int main(int argc, char *argv[]) {
     const char *file = argv[1];
     const char *pattern = argv[2];
 
-    // Start timing (measured with clock())
-    clock_t start_time = clock();
+    // High-resolution timing (wall-clock).
+    // Use QueryPerformanceCounter on Windows, fallback to clock() if unavailable.
+    // This measures real elapsed time, not CPU time, and can fall back to clock if machine support is lacking.
+#ifdef _WIN32
+    LARGE_INTEGER freq, t1, t2;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&t1);
     // Search the file for the pattern
     search_file(file, pattern);
-    clock_t end_time = clock();
-    // End timing
-
-    // Compute elapsed time in milliseconds
-    double elapsed_ms = ((double)(end_time - start_time)) * 1000.0 / CLOCKS_PER_SEC;
+    QueryPerformanceCounter(&t2);
+    double elapsed_ms = (double)(t2.QuadPart - t1.QuadPart) * 1000.0 / (double)freq.QuadPart;
     printf("\nSearch completed in %.3f milliseconds.\n", elapsed_ms);
+#else
+    // POSIX fallback: use clock_gettime when available for monotonic timing
+#if defined(CLOCK_MONOTONIC)
+    struct timespec ts1, ts2;
+    clock_gettime(CLOCK_MONOTONIC, &ts1);
+    search_file(file, pattern);
+    clock_gettime(CLOCK_MONOTONIC, &ts2);
+    double elapsed_ms = (ts2.tv_sec - ts1.tv_sec) * 1000.0 + (ts2.tv_nsec - ts1.tv_nsec) / 1e6;
+    printf("\nSearch completed in %.3f milliseconds.\n", elapsed_ms);
+#else
+    // Fallback to clock() (CPU time) if no monotonic clock available
+    clock_t start_time = clock();
+    search_file(file, pattern);
+    clock_t end_time = clock();
+    double elapsed_ms = ((double)(end_time - start_time)) * 1000.0 / CLOCKS_PER_SEC;
+    printf("\nSearch completed in %.3f milliseconds (CPU time).\n", elapsed_ms);
+#endif
+#endif
 
     return 0;
 }
