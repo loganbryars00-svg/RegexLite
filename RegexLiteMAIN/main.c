@@ -7,22 +7,60 @@ This file handles the arguments and file reading for the regex engine.
 #include <stdlib.h>
 #include "regex.h"
 #include <time.h> // Included for timing benchmarks
+#include <string.h> // Included for string manipulation functions to resolve newline issues in end anchor matching and negation
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
-#include <string.h> // Included for string manipulation functions to resolve newline issues in end anchor matching and negation
 
-// Debugging includes - can be removed later
-// #include <unistd.h>
-// #include <limits.h>
+#define MAX_LINE_LENGTH 1024 // Set a reasonable buffer size for reading lines
+
+/*  * interactive mode: Runs a loop allowing the user to type regex/text manually
+    * Triggered when the user runs the program with NO arguments
+*/
+void intercative_mode() {
+    char pattern[MAX_LINE_LENGTH];
+    char text[MAX_LINE_LENGTH];
+
+    printf("===========================================\n");
+    printf("    Regex Lite Interactive Mode\n");
+    printf("    type 'exit' as pattern to quit.\n");
+    printf("===========================================\n\n");
+
+    while (1) {
+        // Get pattern from user
+        printf("Enter regex pattern: ");
+        if (fgets(pattern, sizeof(pattern), stdin) == NULL)
+            break;
+        // Remove trailing newline
+        pattern[strcspn(pattern, "\n")] = '\0';
+        // Check for exit command
+        if (strcmp(pattern, "exit") == 0) {
+            printf("Exiting...\n");
+            break;
+        }
+
+        // Get text from user
+        printf("Enter text to match: ");
+        if (fgets(text, sizeof(text), stdin) == NULL)
+            break;
+        // Remove trailing newline
+        text[strcspn(text, "\n")] = '\0';
+
+        // Perform matching
+        if (match(pattern, text)) {
+            printf("Match!\n\n");
+        } else {
+            printf("No match.\n\n");
+        }
+    }
+}
 
 /*
 Acts as the "manager" of the regex engine.
 It doesn't know how to match patterns itself; it just feeds lines of text to the match()
 function and acts on the result (the 1 or 0 return value).
 */
-#define MAX_LINE_LENGTH 1024 // Set a reasonable buffer size for reading lines
-
 int search_file(const char *filename, const char *pattern) {
     // Implementation of file search function
     // Open file for reading
@@ -64,6 +102,12 @@ int search_file(const char *filename, const char *pattern) {
 }
 
 int main(int argc, char *argv[]) {
+    // Scenario 1: No arguments - enter interactive mode
+    if (argc == 1) {
+        intercative_mode();
+        return 0;
+    }
+    // scenario 2: Two arguments - file and pattern
     // Check for correct number of arguments
     if (argc != 3) {
         printf("Usage: %s <file> <pattern>\n", argv[0]);
