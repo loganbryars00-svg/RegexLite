@@ -70,15 +70,16 @@ int main(int argc, char *argv[]) {
     const char *file = argv[1];
     const char *pattern = argv[2];
 
-    // Start timing
+    // Start timing (measured with clock())
     clock_t start_time = clock();
     // Search the file for the pattern
     search_file(file, pattern);
     clock_t end_time = clock();
     // End timing
 
-    double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-    printf("\nSearch completed in %.6f seconds.\n", time_taken);
+    // Compute elapsed time in milliseconds
+    double elapsed_ms = ((double)(end_time - start_time)) * 1000.0 / CLOCKS_PER_SEC;
+    printf("\nSearch completed in %.3f milliseconds.\n", elapsed_ms);
 
     return 0;
 }
