@@ -18,7 +18,7 @@ TARGET = regex-lite
 
 # The source files
 
-SRCS = main.c RegexLiteV0_1.c
+SRCS = main.c RegexLiteV1.c
 
 # The object files (based on source files)
 
