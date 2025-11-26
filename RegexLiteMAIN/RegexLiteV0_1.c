@@ -124,6 +124,7 @@ int match_plus(int c, const char *regexp, const char *text) {
     if (*t == '\0' || (c != '.' && *t != (char)c))
         return 0;
     t++; /* consume one */
+    
     /* now reuse star logic for the rest */
     while (*t != '\0' && (c == '.' || *t == (char)c))
         t++;
@@ -135,16 +136,33 @@ int match_plus(int c, const char *regexp, const char *text) {
     return 0;
 }
 
-/* '?' allows zero or one occurrence */
+/* '?' allows zero or one occurrence (GREEDY) */
 int match_question(int c, const char *regexp, const char *text) {
-    /* try zero occurrences */
+    
+    // Try to match one occurrence first
+    if (*text != '\0' && (c == '.' || *text == (char)c)) {
+        
+        // If the character matches, advance the text by 1
+        // Call match_here for the rest of the pattern, because we are done with '?' part of the pattern
+        if (match_here(regexp, text + 1)) {
+            return 1;
+        }
+
+    // BACKTRACK: If the one match case failed, try zero occurrences
+    return match_here(regexp, text);
+    }
+}
+
+/*
+DEPRECATED: Non-greedy version
+    // try zero occurrences
     if (match_here(regexp, text))
         return 1;
-    /* try one occurrence */
+    // try one occurrence
     if (*text != '\0' && (c == '.' || *text == (char)c))
         return match_here(regexp, text + 1);
     return 0;
-}
+*/
 
 /* {n,m} matching: match at least n, at most m (m==-1 means no upper bound) */
 int match_braces(char c, int n, int m, const char *regexp, const char *text) {
