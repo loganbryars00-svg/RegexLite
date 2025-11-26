@@ -7,6 +7,7 @@ This file handles the arguments and file reading for the regex engine.
 #include <stdlib.h>
 #include "regex.h"
 #include <time.h> // Included for timing benchmarks
+#include <string.h> // Included for string manipulation functions to resolve newline issues in end anchor matching and negation
 
 // Debugging includes - can be removed later
 // #include <unistd.h>
