@@ -144,13 +144,11 @@ int match_question(int c, const char *regexp, const char *text) {
         
         // If the character matches, advance the text by 1
         // Call match_here for the rest of the pattern, because we are done with '?' part of the pattern
-        if (match_here(regexp, text + 1)) {
+        if (match_here(regexp, text + 1))
             return 1;
-        }
-
+    }
     // BACKTRACK: If the one match case failed, try zero occurrences
     return match_here(regexp, text);
-    }
 }
 
 /*
