@@ -42,6 +42,8 @@ int search_file(const char *filename, const char *pattern) {
             line_buffer[--len] = '\0';
         }
         // Now line_buffer ends exactly at the visible end of the line
+        // Increment the line counter for each line read
+        line_number++;
         if (match(pattern, line_buffer)) {
             printf("%d: %s\n", line_number, line_buffer);
             // note: I added '\n' explicitly since we stripped the newline
