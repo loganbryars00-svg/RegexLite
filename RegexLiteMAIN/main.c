@@ -32,6 +32,7 @@ int search_file(const char *filename, const char *pattern) {
 
     char line_buffer[MAX_LINE_LENGTH]; // buffer to store the current line
     int line_number = 0;
+    int found = 0; // flag: set to 1 if we find at least one match
 
     // Read the file line by line
     // fgets returns NULL when end of file is reached
@@ -47,10 +48,15 @@ int search_file(const char *filename, const char *pattern) {
         if (match(pattern, line_buffer)) {
             printf("%d: %s\n", line_number, line_buffer);
             // note: I added '\n' explicitly since we stripped the newline
+            found = 1;
         }
     }
     // Clean up: close the file
     fclose(file);
+    // If no matches were found, inform the user
+    if (!found) {
+        printf("No matches found for pattern '%s' in file '%s'.\n", pattern, filename);
+    }
     return 0;
 }
 
