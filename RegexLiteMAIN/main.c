@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     // End timing
 
     double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-    printf("\nSearch completed in %.4f seconds.\n", time_taken);
+    printf("\nSearch completed in %.6f seconds.\n", time_taken);
 
     return 0;
 }
